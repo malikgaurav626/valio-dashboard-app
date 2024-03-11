@@ -1231,3 +1231,76 @@ z-index: -1;
   filter: drop-shadow(0px 0px 3px #0469c1);
   cursor: pointer;
 }
+.positions-container{
+  width: 100%;
+  height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+body::-webkit-scrollbar{
+  display: none;
+}
+.positions-title{
+  font-family: "stratos";
+  font-size: 28px;
+  color: white;
+  margin-bottom: 2px;
+}
+.positions-subtitle{
+  font-family: "Graphik", sans-serif;
+  font-size: 16px;
+  color: #ffffff8c;
+  margin-bottom: 20px;
+}
+.positions-icons{
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+  margin-top: 29px;
+}
+.position-icon{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'stratos', sans-serif;
+  font-size: 18px;
+  color: #ffffff;
+  max-width: 185px;
+  text-align: center;
+  height: fit-content;
+  line-height: 18px;
+  gap: 25px;
+}
+.position-icon svg{
+  filter: hue-rotate(-60deg);
+}
+.connect-wallet-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 60px;
+  border-radius: 15px;
+  background-color: #0071d7;
+  cursor: pointer;
+  font-family: "stratos", sans-serif;
+  font-size: 16px;
+  color: white;
+  transition: 0.2s all;
+  margin-top: 40px;
+  box-shadow: 0px 0px 10px 1px #0071d7;
+}
+.positions-container .background_radial {
+  position: absolute;
+  right: -45vw;
+  top: -60vh;
+  width: 90vw;
+  height: 120vh;
+  background: radial-gradient(circle at center, #0c2b3c 0%, transparent 60%);
+  z-index: -1;
+  transform: scale(1.5);
+}
