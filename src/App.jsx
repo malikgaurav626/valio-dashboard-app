@@ -1388,7 +1388,7 @@ function MyPositions() {
         <div className="background_radial"></div>
         <div className="positions-title">Back any trader in 3 easy steps</div>
         <div className="positions-subtitle">
-          Valio is non-custodial. Withdraw any time - no lockups
+          Vexaris is non-custodial. Withdraw any time - no lockups
         </div>
         <div className="positions-icons">
           <div className="position-icon">
