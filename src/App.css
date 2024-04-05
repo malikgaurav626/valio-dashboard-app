@@ -336,7 +336,10 @@ body {
   border-radius: 5px;
   z-index: 10;
 }
-
+.navbar-link.active{
+  color: white;
+  transition: 0.2s all;
+}
 .navbar-link:hover {
   color: white;
   transition: 0.2s all;
@@ -362,6 +365,144 @@ body {
   margin-right: 20px;
   gap: 15px;
   position: relative;
+}
+.vex-svg g{
+  filter: drop-shadow(0px 0px 15px #0581ee);
+}
+.vex-mobile{
+  font-family: 'stratos';
+padding: 5%;
+text-align: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 10000000000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #061b2e82;
+  backdrop-filter: blur(15px);
+  flex-direction: column;
+  
+}
+.connect-container{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  z-index: 100000000000;
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+  opacity: 0;
+  transition: 0.3s all;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.connect-wallet-container{
+  width: 400px;
+  height: 518px;
+  box-shadow: rgba(55, 65, 81, 0.15) 0px 8px 36px;
+  background-color: #0d161c;
+  border-radius: 24px;
+  padding: 15px 20px;
+}
+.cwc-closeBtn{
+  cursor: pointer;
+  display: flex;
+  opacity: 0.6;
+  padding: 4px;
+  border-radius: 9999px;
+  background-color: #2a3147;
+}
+.cwc-closeBtn:hover{
+  background-color: #505b80;
+}
+.cwc-header{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.cwc-mainlogo{
+  padding: 30px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  font-size: 35px;
+  font-family: 'stratos';
+}
+.s1{
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hidden {
+  display: none;
+}
+.s2{
+  fill: #e4761b;
+  stroke: #e4761b;
+}
+.s3{
+  fill:#f6851b;stroke:#f6851b;
+}
+.cwc-ml-svg img{
+  width: 60px;
+}
+.cwc-heading{
+  font-size: 14px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #d2d7e5;
+  font-weight: 600;
+}
+.cwc-metamask{
+  width: 100%;
+  border-radius: 16px;
+  background-color: #0d151c;
+  font-size: 14px;
+  line-height: 24px;
+  gap: 12px;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  transition: 0.2s all;
+  border: 1px solid hsl(224, 6%, 36%);
+  cursor: pointer;
+  position: relative;
+}
+.cwc-metamask:disabled{
+  color: #046fcb !important;
+}
+.cwc-metamask:disabled:hover{
+  background-color: #0d151c;
+}
+.cwc-metamask span{
+  opacity: 0;
+  transition: 0.2s all;
+  pointer-events: none;
+  color: #0071d7;
+  font-weight: 600;
+  font-size: 12px;
+}
+.cwc-metamask:hover{
+  background-color: #4142457e;
+  transition: 0.2s all;
+}
+.cwc-metamask:hover span{
+  opacity: 1;
+  transition: 0.2s all;
+}
+.connect-container.active{
+  opacity: 1;
+  pointer-events: auto;
+  transition: 0.3s all;
 }
 
 .input-container {
