@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "../App.css";
 import * as bootstrap from "bootstrap";
 import "react-range-slider-input/dist/style.css";
+import RangeSlider from "react-range-slider-input";
 
 export default function Explore() {
   useEffect(() => {
@@ -15,7 +16,6 @@ export default function Explore() {
   const [value, setValue] = useState({ from: 1000000, to: 5000000000 });
 
   const handleOnChange = (changeValue) => {
-    console.log(changeValue);
     setValue({ from: changeValue.from, to: changeValue.to });
   };
 
@@ -113,8 +113,6 @@ export default function Explore() {
 
     let sign = Math.random() < 0.5 ? -1 : 1;
 
-    let finalDailyReturn = sign * parseFloat(dailyReturn);
-    console.log(finalDailyReturn);
     return sign * parseFloat(dailyReturn); // Convert the string to a number
   }
   function generateRandomWeeklyReturn() {
@@ -453,7 +451,6 @@ export default function Explore() {
                   from={value.from}
                   to={value.to}
                   onChange={handleOnChange}
-                  onClick={() => console.log("clicked")}
                 />
               </div>
             </section>
