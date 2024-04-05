@@ -2,7 +2,7 @@ import "../App.css";
 
 import "react-range-slider-input/dist/style.css";
 
-export default function Manage() {
+export default function Manage({ setIsConnectActive }) {
   return (
     <>
       <div className="positions-container">
@@ -248,7 +248,12 @@ export default function Manage() {
             </div>
           </div>
         </div>
-        <div className="connect-wallet-btn">Connect wallet</div>
+        <div
+          className="connect-wallet-btn"
+          onClick={() => setIsConnectActive(true)}
+        >
+          Connect wallet
+        </div>
       </div>
     </>
   );

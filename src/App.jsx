@@ -36,9 +36,9 @@ function App() {
       ) : currentRoute == 1 ? (
         <Explore />
       ) : currentRoute == 2 ? (
-        <MyPositions />
+        <MyPositions setIsConnectActive={setIsConnectActive} />
       ) : (
-        currentRoute == 3 && <Manage />
+        currentRoute == 3 && <Manage setIsConnectActive={setIsConnectActive} />
       )}
       <Footer />
     </>

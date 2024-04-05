@@ -2,7 +2,7 @@ import "../App.css";
 
 import "react-range-slider-input/dist/style.css";
 
-export default function MyPositions() {
+export default function MyPositions({ setIsConnectActive }) {
   return (
     <>
       <div className="positions-container">
@@ -303,7 +303,12 @@ export default function MyPositions() {
             </div>
           </div>
         </div>
-        <div className="connect-wallet-btn">Connect wallet</div>
+        <div
+          className="connect-wallet-btn"
+          onClick={() => setIsConnectActive(true)}
+        >
+          Connect wallet
+        </div>
       </div>
     </>
   );
