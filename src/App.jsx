@@ -6,6 +6,7 @@ import Home from "./home";
 import Manage from "./manage";
 import MyPositions from "./positions";
 import "react-range-slider-input/dist/style.css";
+import { ethers } from "ethers";
 
 function App() {
   const [currentRoute, setCurrentRoute] = useState(0);
@@ -22,11 +23,13 @@ function App() {
         setUserData={setUserData}
       />
 
-      {currentRoute == 0 && <TopMessage />}
+      {/* {currentRoute == 0 && <TopMessage />} */}
       <Navbar
         currentRoute={currentRoute}
         setIsConnectActive={setIsConnectActive}
         setCurrentRoute={setCurrentRoute}
+        userData={userData}
+        setUserData={setUserData}
       />
       {currentRoute == 0 ? (
         <Home />
@@ -46,29 +49,40 @@ function ConnectOverlay({ isConnectActive, setIsConnectActive, setUserData }) {
   const [isFetching, setIsFetching] = useState(false);
 
   const requestMetaMask = async () => {
-    // setIsFetching(true);
-    // // Check if MetaMask is installed
-    // if (!window.ethereum) {
-    //   alert("Please install MetaMask first.");
-    //   return;
-    // }
-    // try {
-    //   // Request account access
-    //   const accounts = await window.ethereum.request({
-    //     method: "eth_requestAccounts",
-    //   });
-    //   // If we have an account, store user data
-    //   if (accounts.length > 0) {
-    //     setUserData({
-    //       address: accounts[0],
-    //       // Add more user data here
-    //     });
-    //   }
-    // } catch (error) {
-    //   alert("Failed to connect to MetaMask");
-    // } finally {
-    //   setIsFetching(false);
-    // }
+    setIsFetching(true);
+    // Check if MetaMask is installed
+    if (!window.ethereum) {
+      alert("Please install MetaMask first.");
+      return;
+    }
+
+    try {
+      // Request account access
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      // If we have an account, fetch and store user data
+      if (accounts.length > 0) {
+        const account = accounts[0];
+        const balanceWei = await window.ethereum.request({
+          method: "eth_getBalance",
+          params: [account, "latest"],
+        });
+        const balanceEth = ethers.formatEther(balanceWei);
+
+        setUserData({
+          address: account,
+          balance: balanceEth,
+          // Add more user data here
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsFetching(false);
+      setIsConnectActive(false);
+    }
   };
 
   return (
@@ -192,9 +206,16 @@ function ConnectOverlay({ isConnectActive, setIsConnectActive, setUserData }) {
             <div className={`cwc-metaloading ${isFetching ? "" : "hidden"}`}>
               <div className="sc-fXSgeo isFMME">
                 <div className="sc-JrDLc kBLmHa">
-                  <div>
-                    <span className="sc-aXZVg beCpKE"></span>
-                    <span className="sc-aXZVg sc-gEvEer beCpKE imaffw"></span>
+                  <div
+                    className="position-relative mb-5 mt-3 d-flex ms-auto me-auto"
+                    style={{
+                      width: "fit-content",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <span className="svg-rata"></span>
+
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       xmlSpace="preserve"
@@ -203,6 +224,9 @@ function ConnectOverlay({ isConnectActive, setIsConnectActive, setUserData }) {
                       viewBox="0 0 318.6 318.6"
                       width="28"
                       height="28"
+                      style={{
+                        transform: "translateY(5px)",
+                      }}
                     >
                       <path
                         fill="#e2761b"
@@ -281,7 +305,7 @@ function ConnectOverlay({ isConnectActive, setIsConnectActive, setUserData }) {
                   disabled={true}
                   className="sc-fqkvVR sc-iGgWBj dQeymh ghZtBP cwc-metamask text-white text-center"
                 >
-                  <span className="ms-auto me-auto">Connecting</span>
+                  <div className="ms-auto me-auto">Connecting</div>
                 </button>
               </div>
             </div>
@@ -542,28 +566,42 @@ function Footer() {
     </>
   );
 }
-function Navbar({ currentRoute, setCurrentRoute, setIsConnectActive }) {
+function Navbar({
+  currentRoute,
+  setCurrentRoute,
+  setIsConnectActive,
+  userData,
+  setUserData,
+}) {
+  const [isAccActive, setIsAccActive] = useState(false);
+
+  const disconnectMetaMask = () => {
+    setUserData({});
+    setIsAccActive(false);
+  };
   return (
     <>
       <div className="navbar-container">
         <div className="navbar-brand">
           <svg
-            width="70px"
+            width="40px"
             height="40px"
-            viewBox="0 0 67 22"
+            viewBox="0 0 30 22"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              d="M29.007 16.928h2.882L35.75 6.241h-2.432l-2.759 8.153-2.8-8.153h-2.656l3.903 10.687ZM39.263 17.132c1.635 0 2.575-.592 3.27-1.512v1.308h2.431V9.919c0-2.922-1.88-3.903-4.27-3.903-2.392 0-4.374 1.042-4.578 3.535h2.39c.123-1.062.757-1.675 2.044-1.675 1.451 0 1.942.715 1.942 2.145v.552h-1.329c-3.065 0-5.476.899-5.476 3.392 0 2.227 1.614 3.167 3.576 3.167Zm.593-1.777c-1.227 0-1.717-.593-1.717-1.492 0-1.308 1.206-1.737 3.086-1.737h1.267v1.063c0 1.369-1.124 2.166-2.636 2.166ZM46.94 16.928h2.472V1.296H46.94v15.632ZM51.568 16.928h2.473V6.241h-2.473v10.687Zm1.206-12.445c.817 0 1.47-.613 1.47-1.41 0-.817-.653-1.43-1.47-1.43-.818 0-1.472.613-1.472 1.43 0 .797.654 1.41 1.472 1.41ZM60.916 15.211c-1.88 0-2.963-1.369-2.963-3.555v-.164c0-2.206 1.124-3.535 2.963-3.535 1.84 0 2.943 1.349 2.943 3.556v.143c0 2.186-1.104 3.555-2.943 3.555Zm-.02 1.921c3.147 0 5.497-2.166 5.497-5.497v-.163c0-3.27-2.35-5.456-5.477-5.456-3.146 0-5.496 2.207-5.496 5.517v.164c0 3.249 2.33 5.435 5.476 5.435Z"
-              fill="#fff"
-            ></path>
             <path
               d="M9.052 5.414a.566.566 0 0 0 .534 0L18.381.742a.17.17 0 0 1 .169.008.177.177 0 0 1 .082.152v3.756a.61.61 0 0 1-.085.31.586.586 0 0 1-.23.22L9.576 9.846a.17.17 0 0 1-.233-.07.183.183 0 0 1-.022-.09V8.137a.61.61 0 0 0-.084-.314.586.586 0 0 0-.23-.221L.314 2.986a.596.596 0 0 1-.23-.222A.62.62 0 0 1 0 2.45V.901A.183.183 0 0 1 .083.748.17.17 0 0 1 .255.742l8.797 4.695v-.023Zm0 5.827L.255 6.545a.17.17 0 0 0-.233.071.183.183 0 0 0-.022.089v1.554c0 .111.028.22.084.316a.596.596 0 0 0 .23.224l8.665 4.616a.585.585 0 0 1 .248.223.61.61 0 0 1 .09.326v1.55a.183.183 0 0 0 .083.154.17.17 0 0 0 .172.005l8.746-4.648a.586.586 0 0 0 .233-.22.609.609 0 0 0 .086-.31V6.737a.182.182 0 0 0-.083-.155.17.17 0 0 0-.172-.005l-8.806 4.64a.565.565 0 0 1-.533 0l.009.023Zm-.01 5.784L.256 12.35a.173.173 0 0 0-.17.008.181.181 0 0 0-.085.151v1.555c0 .11.029.217.084.31.056.094.136.17.23.22l8.665 4.62a.58.58 0 0 1 .23.22.605.605 0 0 1 .085.31v1.555a.188.188 0 0 0 .012.107.181.181 0 0 0 .07.082.174.174 0 0 0 .2-.01l8.747-4.649a.591.591 0 0 0 .233-.221.615.615 0 0 0 .086-.314v-3.756a.187.187 0 0 0-.085-.152.173.173 0 0 0-.17-.008l-8.81 4.648a.566.566 0 0 1-.534 0"
               fill="#046fcb"
             ></path>
           </svg>
-          <div className="beta rounded-pill d-flex justify-content-center align-content-between">
+          Vexaris
+          <div
+            style={{
+              fontSize: "16px",
+            }}
+            className="beta rounded-pill d-flex justify-content-center align-content-between"
+          >
             Beta
           </div>
         </div>
@@ -594,7 +632,7 @@ function Navbar({ currentRoute, setCurrentRoute, setIsConnectActive }) {
           </div>
         </div>
         <div className="navbar-end">
-          <div className="input-container">
+          <div className="input-container pt-1 pb-2">
             <svg
               width="1em"
               height="1em"
@@ -609,106 +647,215 @@ function Navbar({ currentRoute, setCurrentRoute, setIsConnectActive }) {
             </svg>
             <input type="text" placeholder="Search..." />
           </div>
-          <button
-            className="sc-kgKVFY connectButton cb2 me-3"
-            onClick={() => setIsConnectActive(true)}
-          >
-            Connect
-            <div className="absolutePosition">
-              <div className="absolutePosition">
-                <svg className="sc-hAtEyd svgContainer">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
-                </svg>
-                <svg className="sc-hAtEyd svgContainer strokeBlurMedium">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
-                </svg>
-                <svg className="sc-hAtEyd svgContainer strokeBlurSmall">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
-                </svg>
-                <svg className="sc-hAtEyd svgContainer blurEffect">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
+
+          {Object.keys(userData).length > 0 ? (
+            <div className="user-data-container">
+              <div
+                className="myacc-details"
+                onClick={() => setIsAccActive(!isAccActive)}
+              >
+                <div className="myacc-title">My account</div>
+                <div className="myacc-bal">
+                  <div className="myacc-svg">
+                    <svg
+                      width="12px"
+                      height="12px"
+                      viewBox="0 0 20 18"
+                      xmlns="http://www.w3.org/2000/svg"
+                      color="secondary"
+                      className="sc-beqWaB lmOvJl"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M18.476 6.098v1.28c.853 0 1.524.305 1.524 1.22v3.475c0 .915-.67 1.22-1.524 1.22v1.34c0 1.281-1.037 2.379-2.317 2.379H2.316C1.037 17.012 0 15.914 0 14.634V2.439C0 1.098 1.159 0 2.5 0h11.524a2.316 2.316 0 0 1 2.318 2.317V3.78c1.219.183 2.134 1.037 2.134 2.318ZM2.5 1.22A1.25 1.25 0 0 0 1.22 2.5c0 .67.549 1.28 1.28 1.28h12.622V2.318c0-.61-.488-1.097-1.159-1.097H2.5Zm12.56 10.914h3.781V8.537h-3.78c-2.317 0-2.317 3.597 0 3.597Zm1.342-2.805c.549 0 .975.427.975.976 0 .61-.426 1.036-.975 1.036a1.028 1.028 0 0 1-1.037-1.036c0-.55.488-.976 1.037-.976Z"
+                        fill="#ffffff8c"
+                      ></path>
+                    </svg>
+                  </div>
+                  {Object.keys(userData).length > 0
+                    ? userData.balance
+                    : "N / A"}
+                </div>
+              </div>
+              <div className="arrow">
+                <svg
+                  width="12px"
+                  height="12px"
+                  viewBox="0 0 12 7"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="sc-beqWaB kZGKbI sc-iERabD fUqDVt"
+                >
+                  <path
+                    d="M4.183 6.144.25 1.664C.09 1.483 0 1.235 0 .978 0 .719.09.47.25.289A.86.86 0 0 1 .527.075a.768.768 0 0 1 .66 0c.104.05.199.122.278.214l3.926 4.489a.86.86 0 0 0 .278.213.768.768 0 0 0 .66 0 .86.86 0 0 0 .279-.213l3.925-4.49A.81.81 0 0 1 11.139 0c.228 0 .446.101.608.284.161.182.252.43.253.69 0 .258-.089.507-.249.69l-3.934 4.48C7.335 6.692 6.681 7 6 7s-1.335-.308-1.817-.856Z"
+                    fill="#ffffff8c"
+                  ></path>
                 </svg>
               </div>
-              <div className="absolutePosition rotate180 svg-sect-2">
-                <svg className="sc-hAtEyd svgContainer">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
-                </svg>
-                <svg className="sc-hAtEyd svgContainer strokeBlurMedium">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
-                </svg>
-                <svg className="sc-hAtEyd svgContainer strokeBlurSmall">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
-                </svg>
-                <svg className="sc-hAtEyd svgContainer blurEffect">
-                  <rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    rx="6"
-                    ry="6"
-                    pathLength="10"
-                  ></rect>
-                </svg>
+              <div className={"acc-menu " + (isAccActive && " active")}>
+                <div className="am-header">
+                  {Object.keys(userData).length > 0
+                    ? `${userData.address.substring(
+                        0,
+                        4
+                      )}…${userData.address.substring(
+                        userData.address.length - 4
+                      )}`
+                    : "N / A"}
+                  <div
+                    className="ms-auto a-no-copy"
+                    onClick={() => {
+                      navigator.clipboard.writeText(userData.address).then(
+                        function () {
+                          /* clipboard successfully set */
+                          alert("Address copied to clipboard!");
+                        },
+                        function () {
+                          /* clipboard write failed */
+                          alert("Failed to copy address to clipboard.");
+                        }
+                      );
+                    }}
+                  >
+                    Copy{" "}
+                    <svg
+                      width="12px"
+                      height="12px"
+                      viewBox="0 0 16 16"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="sc-beqWaB kZGKbI"
+                    >
+                      <path
+                        d="M10 13.333H3.333A3.337 3.337 0 0 1 0 10V3.333A3.337 3.337 0 0 1 3.333 0H10a3.338 3.338 0 0 1 3.333 3.333V10A3.338 3.338 0 0 1 10 13.333Zm-6.667-12a2 2 0 0 0-2 2V10a2 2 0 0 0 2 2H10a2 2 0 0 0 2-2V3.333a2 2 0 0 0-2-2H3.333ZM16 12.667V4a.666.666 0 1 0-1.333 0v8.667a2 2 0 0 1-2 2H4A.667.667 0 1 0 4 16h8.667A3.337 3.337 0 0 0 16 12.667Z"
+                        fill="currentColor"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <div className="am-body">
+                  <div className="am-disconnect" onClick={disconnectMetaMask}>
+                    <svg
+                      width="12px"
+                      height="12px"
+                      viewBox="0 0 16 16"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="sc-beqWaB cHmvy"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M11.282 13.5v-1.25a.625.625 0 1 0-1.25 0v1.25c0 .69-.561 1.25-1.25 1.25H2.5c-.69 0-1.25-.56-1.25-1.25v-11c0-.69.56-1.25 1.25-1.25h6.282c.689 0 1.25.56 1.25 1.25v1.25a.625.625 0 1 0 1.25 0V2.5c0-1.378-1.122-2.5-2.5-2.5H2.5A2.503 2.503 0 0 0 0 2.5v11C0 14.88 1.122 16 2.5 16h6.282c1.378 0 2.5-1.12 2.5-2.5Zm2.861-7.973 1.4 1.4c.61.609.61 1.6 0 2.21l-1.4 1.4a.623.623 0 0 1-.884 0 .625.625 0 0 1 0-.885l.996-.995H6.75a.625.625 0 1 1 0-1.25h7.505l-.996-.996a.625.625 0 1 1 .884-.884Z"
+                        fill="currentColor"
+                      ></path>
+                    </svg>
+                    Disconnect
+                  </div>
+                </div>
               </div>
             </div>
-          </button>
+          ) : (
+            <button
+              className="sc-kgKVFY connectButton cb2 me-3"
+              onClick={() => setIsConnectActive(true)}
+            >
+              Connect
+              <div className="absolutePosition">
+                <div className="absolutePosition">
+                  <svg className="sc-hAtEyd svgContainer">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                  <svg className="sc-hAtEyd svgContainer strokeBlurMedium">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                  <svg className="sc-hAtEyd svgContainer strokeBlurSmall">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                  <svg className="sc-hAtEyd svgContainer blurEffect">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                </div>
+                <div className="absolutePosition rotate180 svg-sect-2">
+                  <svg className="sc-hAtEyd svgContainer">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                  <svg className="sc-hAtEyd svgContainer strokeBlurMedium">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                  <svg className="sc-hAtEyd svgContainer strokeBlurSmall">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                  <svg className="sc-hAtEyd svgContainer blurEffect">
+                    <rect
+                      x="0"
+                      y="0"
+                      width="100%"
+                      height="100%"
+                      rx="6"
+                      ry="6"
+                      pathLength="10"
+                    ></rect>
+                  </svg>
+                </div>
+              </div>
+            </button>
+          )}
         </div>
       </div>
     </>
